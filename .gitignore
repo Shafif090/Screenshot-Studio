@@ -1,0 +1,37 @@
+# Gradle and build output
+.gradle/
+build/
+run/
+tools/
+
+# Local Minecraft instance data
+assets/
+config/
+data/
+downloads/
+logs/
+mods/
+resourcepacks/
+resources/
+saves/
+screenshots/
+
+# Imported or generated source trees
+.freecam-source/
+.mc-src/
+
+# IDE state
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+prompt.md
+
+# Misc local artifacts
+*.log
+*.zip
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
