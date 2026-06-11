@@ -1,6 +1,11 @@
 # Screenshot Studio
 
-Screenshot Studio is a client-side Fabric photo mode mod for Minecraft `26.1.2`.
+Screenshot Studio is a client-side Fabric mod that turns Minecraft into a cinematic camera studio for capturing high-quality, cinematic screenshots. Capture screenshots with full camera control, visual effects, and presets.
+
+## Links
+
+- Modrinth: <https://modrinth.com/mod/screenshot-studio>
+- Source: <https://github.com/Shafif090/Screenshot-Studio>
 
 ## Build
 
@@ -16,11 +21,13 @@ The built mod jar is written to `build/libs/`.
 
 - Toggleable photo mode with default `F9` keybind.
 - Singleplayer pause behavior through an in-game pause screen; multiplayer keeps the server running.
-- Detached free camera with smooth interpolation.
-- WASD horizontal camera movement, Space/Shift vertical movement, Q/E roll, mouse drag look, Alt+scroll speed control.
+- Detached free camera with precision, cinematic, and scouting movement modes.
+- WASD horizontal camera movement, Space/Shift vertical movement, Ctrl boost, Q/E roll, mouse drag look, mouse-wheel FOV, and Alt+scroll speed control.
 - Hidden vanilla HUD and first-person hand while photo mode is active.
-- Animated cinematic letterbox and screenshot flash.
-- Right-side photo panel with camera, color, effects, and preset tabs.
+- Screenshot flash without capturing the photo mode panel.
+- Right-side photo panel with camera, color, effects, preset tabs, reset, screenshot, and help controls.
+- Help popup with the important photo mode keybinds.
+- Toast notification button for opening the saved screenshot.
 - Built-in presets: Cinematic, Vivid, Noir.
 - Custom presets saved as JSON under `.minecraft/config/screenshotstudio/presets/`.
 - Screenshot panel button using Minecraft's current screenshot API through a small abstraction.
@@ -32,12 +39,19 @@ The built mod jar is written to `build/libs/`.
 - `H`: Hide or show the photo panel while photo mode is open.
 - `W/A/S/D`: Move the detached camera horizontally.
 - `Space` / `Shift`: Move camera up / down.
+- `Ctrl`: Boost camera movement.
 - `Q` / `E`: Roll camera.
+- `Mouse drag`: Look around while dragging outside the panel.
+- `Mouse wheel`: Adjust FOV while scrolling outside the panel.
 - `Alt + mouse wheel`: Adjust camera movement speed.
+- `F`: Pick depth-of-field focus from the current target.
+- `Middle click`: Pick depth-of-field focus while clicking outside the panel.
+- `M`: Cycle movement mode.
 - Optional screenshot keybind is registered but disabled by default in `config/screenshotstudio.json`.
 
 ## Known Limitations
 
+- Multiplayer freecam is client-side. Server chunk loading is still limited by the chunks the server sends around the real player.
 - Minecraft `26.1.2` moved GUI rendering to `GuiGraphicsExtractor`, so post effects are implemented with a safe overlay fallback by default. The GLSL resources are present for a future renderer-specific pipeline hook.
 - Depth of field uses a screen-space center blur fallback because stable depth-buffer access is not exposed safely here.
 - The time-of-day slider is disabled gracefully; visual-only sky time needs a version-specific renderer hook.

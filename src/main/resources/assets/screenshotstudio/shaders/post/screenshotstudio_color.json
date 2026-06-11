@@ -1,0 +1,12 @@
+{
+	"targets": [
+		"screenshotstudio_swap"
+	],
+	"passes": [
+		{
+			"name": "screenshotstudio_color",
+			"intarget": "minecraft:main",
+			"outtarget": "screenshotstudio_swap"
+		}
+	]
+}

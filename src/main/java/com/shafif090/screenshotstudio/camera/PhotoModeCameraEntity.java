@@ -29,7 +29,7 @@ public final class PhotoModeCameraEntity extends AbstractClientPlayer {
 
 	public void syncTo(CameraState state) {
 		Vec3 position = state.targetPosition();
-		snapTo(position.x, position.y, position.z, state.targetYaw(), state.targetPitch());
+		snapTo(position.x, position.y - getEyeHeight(), position.z, state.targetYaw(), state.targetPitch());
 		setYHeadRot(state.targetYaw());
 		setYBodyRot(state.targetYaw());
 		setDeltaMovement(Vec3.ZERO);

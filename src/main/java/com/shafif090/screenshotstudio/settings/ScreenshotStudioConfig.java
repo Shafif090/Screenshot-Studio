@@ -20,6 +20,7 @@ public final class ScreenshotStudioConfig {
 	public boolean screenshotKeyEnabled = false;
 	public String defaultPreset = "Cinematic";
 	public double movementSpeedMultiplier = 1.0D;
+	public PhotoModeSettings lastSettings;
 
 	public static ScreenshotStudioConfig load() {
 		Path path = configPath();
@@ -61,6 +62,9 @@ public final class ScreenshotStudioConfig {
 		}
 		if (defaultPreset == null || defaultPreset.isBlank()) {
 			defaultPreset = "Cinematic";
+		}
+		if (lastSettings != null) {
+			lastSettings.clamp();
 		}
 	}
 

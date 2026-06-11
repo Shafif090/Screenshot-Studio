@@ -1,0 +1,47 @@
+{
+  "targets": {
+    "screenshotstudio:swap": {}
+  },
+  "passes": [
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "screenshotstudio:post/screenshotstudio_color",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "minecraft:main",
+          "bilinear": true
+        }
+      ],
+      "output": "screenshotstudio:swap",
+      "uniforms": {
+        "ScreenshotStudioConfig": [
+          { "name": "ColorA", "type": "vec4", "value": [0.0, 0.0, 0.0, 0.0] },
+          { "name": "ColorB", "type": "vec4", "value": [0.0, 0.0, 0.0, 0.0] },
+          { "name": "LensA", "type": "vec4", "value": [0.0, 0.0, 0.0, 0.0] },
+          { "name": "Runtime", "type": "vec4", "value": [0.0, 0.0, 0.0, 0.0] }
+        ]
+      }
+    },
+    {
+      "vertex_shader": "minecraft:core/screenquad",
+      "fragment_shader": "minecraft:post/blit",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "screenshotstudio:swap"
+        }
+      ],
+      "uniforms": {
+        "BlitConfig": [
+          {
+            "name": "ColorModulate",
+            "type": "vec4",
+            "value": [1.0, 1.0, 1.0, 1.0]
+          }
+        ]
+      },
+      "output": "minecraft:main"
+    }
+  ]
+}

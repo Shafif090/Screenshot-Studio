@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "screenshotstudio",
+  "version": "${version}",
+  "name": "Screenshot Studio",
+  "description": "A client-side Fabric mod that turns Minecraft into a cinematic camera studio.",
+  "icon": "assets/screenshotstudio/icon.png",
+  "authors": ["Shafif090"],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/screenshot-studio",
+    "sources": "https://github.com/Shafif090/Screenshot-Studio"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "main": ["com.shafif090.screenshotstudio.ScreenshotStudioMod"],
+    "client": ["com.shafif090.screenshotstudio.ScreenshotStudioClient"]
+  },
+  "mixins": [
+    {
+      "config": "screenshotstudio.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.2",
+    "minecraft": "~26.1.2",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}

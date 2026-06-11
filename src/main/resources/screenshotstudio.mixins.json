@@ -1,0 +1,21 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "com.shafif090.screenshotstudio.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "accessor.PostChainAccessor",
+    "accessor.PostPassAccessor",
+    "CameraMixin",
+    "EntityRenderDispatcherMixin",
+    "GameRendererMixin",
+    "InGameHudMixin",
+    "ItemInHandRendererMixin",
+    "LevelRendererMixin",
+    "MinecraftMixin",
+    "MouseMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

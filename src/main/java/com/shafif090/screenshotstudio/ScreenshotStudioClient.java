@@ -15,10 +15,15 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.client.player.KeyboardInput;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Input;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 public final class ScreenshotStudioClient implements ClientModInitializer {
 	private static final FreeCameraController CAMERA = new FreeCameraController();
@@ -36,16 +41,21 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 	private static boolean previousSmartCull;
 	private static CameraType previousCameraType;
 	private static PhotoModeCameraEntity cameraEntity;
+	private static ClientLevel activeLevel;
+	private static LocalPlayer activePlayer;
 	private static int flashTicks;
 	private static boolean screenshotQueued;
 	private static int screenshotDelayTicks;
 	private static int uiSuppressTicks;
+	private static int settingsAutosaveTicks;
 
 	@Override
 	public void onInitializeClient() {
 		config = ScreenshotStudioConfig.load();
 		presets = new PresetManager();
-		settings = presets.load(config.defaultPreset).orElseGet(PhotoModeSettings::defaults);
+		settings = config.lastSettings != null
+				? config.lastSettings.copy()
+				: presets.load(config.defaultPreset).orElseGet(PhotoModeSettings::defaults);
 		settings.clamp();
 
 		KeyMapping.Category category = KeyMapping.Category.register(ScreenshotStudioMod.id("category"));
@@ -68,7 +78,7 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 	}
 
 	private static void onStartClientTick(Minecraft client) {
-		if (!active || client.player == null || !(client.player.input instanceof KeyboardInput)) {
+		if (!active || client.player == null || client.player != activePlayer || !(client.player.input instanceof KeyboardInput)) {
 			return;
 		}
 
@@ -94,7 +104,7 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 			return;
 		}
 
-		if (client.player == null || client.level == null) {
+		if (client.player == null || client.level == null || client.player != activePlayer || client.level != activeLevel) {
 			exitPhotoMode(client);
 			return;
 		}
@@ -104,8 +114,13 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 		}
 
 		CAMERA.tick(client, settings, config);
+		settings.clamp();
 		syncCameraEntity(client);
 		POST_PROCESS.tick(settings);
+		if (++settingsAutosaveTicks >= 200) {
+			saveCurrentSettings();
+			settingsAutosaveTicks = 0;
+		}
 
 		if (flashTicks > 0) {
 			flashTicks--;
@@ -136,10 +151,11 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 		previousHideGui = client.options.hideGui;
 		previousSmartCull = client.smartCull;
 		previousCameraType = client.options.getCameraType();
+		activeLevel = client.level;
+		activePlayer = client.player;
+		settingsAutosaveTicks = 0;
 		client.smartCull = false;
-		if (client.gameRenderer.getMainCamera().isDetached()) {
-			client.options.setCameraType(CameraType.FIRST_PERSON);
-		}
+		client.options.setCameraType(CameraType.THIRD_PERSON_BACK);
 		CAMERA.captureFromPlayer(client.player, settings);
 		syncCameraEntity(client);
 		client.setScreen(new PhotoModeScreen());
@@ -151,7 +167,10 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 		}
 
 		active = false;
+		saveCurrentSettings();
 		restoreCameraEntity(client);
+		activeLevel = null;
+		activePlayer = null;
 		client.options.hideGui = previousHideGui;
 		client.smartCull = previousSmartCull;
 		if (previousCameraType != null) {
@@ -169,6 +188,12 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 
 		if (client.screen instanceof PhotoModeScreen) {
 			client.setScreen(null);
+		}
+	}
+
+	public static void forceExitPhotoMode() {
+		if (active) {
+			exitPhotoMode(Minecraft.getInstance());
 		}
 	}
 
@@ -218,6 +243,32 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 
 	public static PhotoModeSettings settings() {
 		return settings;
+	}
+
+	public static void saveCurrentSettings() {
+		if (config != null && settings != null) {
+			config.lastSettings = settings.copy();
+			config.save();
+		}
+	}
+
+	public static boolean pickFocusDistance(Minecraft client) {
+		if (!active || client.level == null) {
+			return false;
+		}
+
+		Vec3 from = CAMERA.state().renderPosition();
+		HitResult hitResult = client.hitResult;
+		if (hitResult == null || hitResult.getType() == HitResult.Type.MISS) {
+			return false;
+		}
+
+		settings.depthOfField = true;
+		if (settings.aperture < 0.1D) {
+			settings.aperture = 6.0D;
+		}
+		settings.focusDistance = Mth.clamp(hitResult.getLocation().distanceTo(from), 0.5D, 100.0D);
+		return true;
 	}
 
 	public static PresetManager presets() {

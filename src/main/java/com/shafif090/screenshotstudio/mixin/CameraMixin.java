@@ -83,7 +83,7 @@ public abstract class CameraMixin {
 		setRotation(state.renderYaw(), state.renderPitch());
 		applyRoll(state.renderRoll());
 		applyFov();
-		this.detached = false;
+		this.detached = true;
 	}
 
 	@Inject(method = "getFov", at = @At("HEAD"), cancellable = true, require = 0)

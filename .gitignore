@@ -1,28 +1,26 @@
 # Gradle and build output
-.gradle/
-build/
-run/
-tools/
+/.gradle/
+/build/
+/run/
+/tools/
 
 # Local Minecraft instance data
-assets/
-config/
-data/
-downloads/
-logs/
-mods/
-resourcepacks/
-resources/
-saves/
-screenshots/
+/assets/
+/config/
+/data/
+/downloads/
+/logs/
+/mods/
+/resourcepacks/
+/resources/
+/saves/
+/screenshots/
 
 # Imported or generated source trees
-.freecam-source/
-.mc-src/
+/.mc-src/
 
 # IDE state
-.vscode/
-.idea/
+/.idea/
 *.iml
 *.ipr
 *.iws

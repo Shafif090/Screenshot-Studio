@@ -11,6 +11,7 @@ import net.minecraft.world.phys.Vec3;
 public final class FreeCameraController {
 	private final CameraState state = new CameraState();
 	private double speed = 0.35D;
+	private MovementMode movementMode = MovementMode.CINEMATIC;
 
 	public void captureFromPlayer(LocalPlayer player, PhotoModeSettings settings) {
 		state.snap(player.getEyePosition(1.0F), player.getYRot(), player.getXRot(), (float) settings.roll);
@@ -21,10 +22,10 @@ public final class FreeCameraController {
 			return;
 		}
 
-		double speedScale = speed * Math.max(0.05D, config.movementSpeedMultiplier);
+		double speedScale = speed * movementMode.speedMultiplier * Math.max(0.05D, config.movementSpeedMultiplier);
 		if (InputConstants.isKeyDown(client.getWindow(), InputConstants.KEY_LCONTROL)
 				|| InputConstants.isKeyDown(client.getWindow(), InputConstants.KEY_RCONTROL)) {
-			speedScale *= 4.0D;
+			speedScale *= movementMode.boostMultiplier;
 		}
 
 		Vec3 movement = Vec3.ZERO;
@@ -64,7 +65,7 @@ public final class FreeCameraController {
 		}
 
 		state.setTargetRoll((float) settings.roll);
-		state.interpolate(0.28F);
+		state.interpolate(movementMode.interpolationAlpha);
 	}
 
 	public void rotateFromDrag(double deltaX, double deltaY) {
@@ -74,6 +75,11 @@ public final class FreeCameraController {
 
 	public void changeSpeed(double scrollSteps) {
 		speed = Mth.clamp(speed + scrollSteps * 0.06D, 0.03D, 3.0D);
+	}
+
+	public void cycleMovementMode() {
+		MovementMode[] values = MovementMode.values();
+		movementMode = values[(movementMode.ordinal() + 1) % values.length];
 	}
 
 	public void changeRoll(PhotoModeSettings settings, double scrollSteps) {
@@ -91,5 +97,31 @@ public final class FreeCameraController {
 
 	public double speed() {
 		return speed;
+	}
+
+	public MovementMode movementMode() {
+		return movementMode;
+	}
+
+	public enum MovementMode {
+		PRECISION("Precision", 0.35D, 2.0D, 0.20F),
+		CINEMATIC("Cinematic", 0.80D, 3.0D, 0.12F),
+		SCOUTING("Scouting", 2.25D, 5.0D, 0.35F);
+
+		private final String label;
+		private final double speedMultiplier;
+		private final double boostMultiplier;
+		private final float interpolationAlpha;
+
+		MovementMode(String label, double speedMultiplier, double boostMultiplier, float interpolationAlpha) {
+			this.label = label;
+			this.speedMultiplier = speedMultiplier;
+			this.boostMultiplier = boostMultiplier;
+			this.interpolationAlpha = interpolationAlpha;
+		}
+
+		public String label() {
+			return label;
+		}
 	}
 }
