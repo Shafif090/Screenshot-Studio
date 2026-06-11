@@ -2,6 +2,8 @@
 
 Screenshot Studio is a client-side Fabric mod that turns Minecraft into a cinematic camera studio for capturing high-quality, cinematic screenshots. Capture screenshots with full camera control, visual effects, and presets.
 
+<img src="media/demo_2.png" alt=""/>
+
 ## Links
 
 - Modrinth: <https://modrinth.com/mod/screenshot-studio>
@@ -49,6 +51,14 @@ The built mod jar is written to `build/libs/`.
 - `Middle click`: Pick depth-of-field focus while clicking outside the panel.
 - `M`: Cycle movement mode.
 - Optional screenshot keybind is registered but disabled by default in `config/screenshotstudio.json`.
+
+## Screenshots and Videos
+
+<img src="media/demo_1.gif" alt="At a glance"/>
+
+<img src="media/demo_2.png" alt=""/>
+
+<img src="media/demo_3.png" alt=""/>
 
 ## Known Limitations
 
