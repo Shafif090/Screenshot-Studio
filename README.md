@@ -20,7 +20,8 @@ The built mod jar is written to `build/libs/`.
 ## Features
 
 - Toggleable photo mode with default `F9` keybind.
-- Singleplayer pause behavior through an in-game pause screen; multiplayer keeps the server running.
+- Singleplayer opens paused by default, with a photo mode button to switch the world between paused and running.
+- Multiplayer and LAN-published worlds keep running because the server cannot be paused client-side.
 - Detached free camera with precision, cinematic, and scouting movement modes.
 - WASD horizontal camera movement, Space/Shift vertical movement, Ctrl boost, Q/E roll, mouse drag look, mouse-wheel FOV, and Alt+scroll speed control.
 - Hidden vanilla HUD and first-person hand while photo mode is active.

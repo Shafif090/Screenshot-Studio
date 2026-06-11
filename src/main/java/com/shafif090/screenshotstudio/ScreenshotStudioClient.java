@@ -37,6 +37,7 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 	private static KeyMapping screenshotKey;
 	private static boolean active;
 	private static boolean panelVisible = true;
+	private static boolean pauseSingleplayer;
 	private static boolean previousHideGui;
 	private static boolean previousSmartCull;
 	private static CameraType previousCameraType;
@@ -108,6 +109,9 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 			exitPhotoMode(client);
 			return;
 		}
+		if (!client.isSingleplayer()) {
+			pauseSingleplayer = false;
+		}
 
 		if (!(client.screen instanceof PhotoModeScreen)) {
 			client.setScreen(new PhotoModeScreen());
@@ -148,6 +152,7 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 
 		active = true;
 		panelVisible = true;
+		pauseSingleplayer = client.isSingleplayer();
 		previousHideGui = client.options.hideGui;
 		previousSmartCull = client.smartCull;
 		previousCameraType = client.options.getCameraType();
@@ -184,6 +189,7 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 		screenshotQueued = false;
 		screenshotDelayTicks = 0;
 		uiSuppressTicks = 0;
+		pauseSingleplayer = false;
 		KeyMapping.releaseAll();
 
 		if (client.screen instanceof PhotoModeScreen) {
@@ -222,7 +228,24 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 	}
 
 	public static boolean shouldPauseWorld() {
-		return false;
+		return active && pauseSingleplayer && Minecraft.getInstance().isSingleplayer();
+	}
+
+	public static boolean canToggleSingleplayerPause() {
+		return active && Minecraft.getInstance().isSingleplayer();
+	}
+
+	public static void toggleSingleplayerPause() {
+		if (canToggleSingleplayerPause()) {
+			pauseSingleplayer = !pauseSingleplayer;
+		}
+	}
+
+	public static Component pauseLabel() {
+		if (!canToggleSingleplayerPause()) {
+			return Component.translatable("screen.screenshotstudio.pause.unavailable");
+		}
+		return Component.translatable(pauseSingleplayer ? "screen.screenshotstudio.pause.on" : "screen.screenshotstudio.pause.off");
 	}
 
 	public static boolean isPhotoModeCamera(Object entity) {
