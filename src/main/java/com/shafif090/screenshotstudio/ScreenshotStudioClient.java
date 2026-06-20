@@ -39,6 +39,7 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 	private static boolean active;
 	private static boolean panelVisible = true;
 	private static boolean pauseSingleplayer;
+	private static boolean showNameTags = true;
 	private static boolean previousSmartCull;
 	private static CameraType previousCameraType;
 	private static PhotoModeCameraEntity cameraEntity;
@@ -153,6 +154,7 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 		active = true;
 		panelVisible = true;
 		pauseSingleplayer = isSingleplayer(client);
+		showNameTags = true;
 		previousSmartCull = client.smartCull;
 		previousCameraType = client.options.getCameraType();
 		activeLevel = client.level;
@@ -188,6 +190,7 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 		screenshotDelayTicks = 0;
 		uiSuppressTicks = 0;
 		pauseSingleplayer = false;
+		showNameTags = true;
 		KeyMapping.releaseAll();
 
 		if (client.gui.screen() instanceof PhotoModeScreen) {
@@ -244,6 +247,18 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 			return Component.translatable("screen.screenshotstudio.pause.unavailable");
 		}
 		return Component.translatable(pauseSingleplayer ? "screen.screenshotstudio.pause.on" : "screen.screenshotstudio.pause.off");
+	}
+
+	public static boolean shouldShowNameTags() {
+		return showNameTags;
+	}
+
+	public static void toggleNameTags() {
+		showNameTags = !showNameTags;
+	}
+
+	public static Component nameTagsLabel() {
+		return Component.translatable(showNameTags ? "screen.screenshotstudio.nametags.on" : "screen.screenshotstudio.nametags.off");
 	}
 
 	public static boolean isPhotoModeCamera(Object entity) {

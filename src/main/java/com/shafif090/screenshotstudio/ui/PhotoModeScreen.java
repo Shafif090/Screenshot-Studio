@@ -92,7 +92,8 @@ public final class PhotoModeScreen extends Screen {
 		refreshScrollableWidgetVisibility();
 
 		addPauseButton(contentX, footerTop, contentWidth);
-		addCommonButtons(contentX, footerTop + 26, contentWidth);
+		addNameTagsButton(contentX, footerTop + 24, contentWidth);
+		addCommonButtons(contentX, footerTop + 50, contentWidth);
 		addHelpButton(contentX + contentWidth - 20, helpButtonY());
 	}
 
@@ -192,6 +193,13 @@ public final class PhotoModeScreen extends Screen {
 		}).bounds(x, y, width, 20).build();
 		button.active = ScreenshotStudioClient.canToggleSingleplayerPause();
 		addFixedWidget(button);
+	}
+
+	private void addNameTagsButton(int x, int y, int width) {
+		addFixedWidget(Button.builder(ScreenshotStudioClient.nameTagsLabel(), ignored -> {
+			ScreenshotStudioClient.toggleNameTags();
+			rebuildWidgets();
+		}).bounds(x, y, width, 20).build());
 	}
 
 	private void addHelpButton(int x, int y) {
@@ -561,7 +569,7 @@ public final class PhotoModeScreen extends Screen {
 	}
 
 	private int footerTop() {
-		return Math.max(contentTop + CONTROL_HEIGHT, panelBottom() - (isCompactHeight() ? 72 : 96));
+		return Math.max(contentTop + CONTROL_HEIGHT, panelBottom() - (isCompactHeight() ? 96 : 120));
 	}
 
 	private boolean isCompactHeight() {

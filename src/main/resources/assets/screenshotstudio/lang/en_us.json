@@ -15,6 +15,8 @@
   "screen.screenshotstudio.pause.on": "World: Paused",
   "screen.screenshotstudio.pause.off": "World: Running",
   "screen.screenshotstudio.pause.unavailable": "World: Multiplayer",
+  "screen.screenshotstudio.nametags.on": "Name Tags: Shown",
+  "screen.screenshotstudio.nametags.off": "Name Tags: Hidden",
   "screen.screenshotstudio.help": "?",
   "screen.screenshotstudio.help.title": "Keybinds",
   "screen.screenshotstudio.help.move": "WASD - Move horizontally",

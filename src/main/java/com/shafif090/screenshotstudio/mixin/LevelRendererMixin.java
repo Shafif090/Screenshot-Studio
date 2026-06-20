@@ -41,6 +41,10 @@ public abstract class LevelRendererMixin {
 		if (state instanceof LivingEntityRenderState livingState) {
 			livingState.isInvisibleToPlayer = false;
 		}
+		if (!ScreenshotStudioClient.shouldShowNameTags()) {
+			state.nameTag = null;
+			state.scoreText = null;
+		}
 		output.entityRenderStates.add(state);
 		output.lastEntityRenderStateCount = output.entityRenderStates.size();
 	}
