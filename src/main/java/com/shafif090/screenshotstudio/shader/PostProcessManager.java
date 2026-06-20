@@ -50,7 +50,7 @@ public final class PostProcessManager {
 			shaderLogged = false;
 			shaderAvailable = true;
 			updateUniforms(postChain, settings);
-			postChain.process(client.getMainRenderTarget(), resourcePool);
+			postChain.process(client.gameRenderer.mainRenderTarget(), resourcePool);
 		} catch (Throwable throwable) {
 			shaderAvailable = false;
 			if (!shaderLogged) {

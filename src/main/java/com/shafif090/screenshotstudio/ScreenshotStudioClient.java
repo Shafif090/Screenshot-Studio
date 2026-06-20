@@ -19,6 +19,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.client.player.KeyboardInput;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Input;
@@ -38,7 +39,6 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 	private static boolean active;
 	private static boolean panelVisible = true;
 	private static boolean pauseSingleplayer;
-	private static boolean previousHideGui;
 	private static boolean previousSmartCull;
 	private static CameraType previousCameraType;
 	private static PhotoModeCameraEntity cameraEntity;
@@ -109,12 +109,12 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 			exitPhotoMode(client);
 			return;
 		}
-		if (!client.isSingleplayer()) {
+		if (!isSingleplayer(client)) {
 			pauseSingleplayer = false;
 		}
 
-		if (!(client.screen instanceof PhotoModeScreen)) {
-			client.setScreen(new PhotoModeScreen());
+		if (!(client.gui.screen() instanceof PhotoModeScreen)) {
+			client.gui.setScreen(new PhotoModeScreen());
 		}
 
 		CAMERA.tick(client, settings, config);
@@ -152,8 +152,7 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 
 		active = true;
 		panelVisible = true;
-		pauseSingleplayer = client.isSingleplayer();
-		previousHideGui = client.options.hideGui;
+		pauseSingleplayer = isSingleplayer(client);
 		previousSmartCull = client.smartCull;
 		previousCameraType = client.options.getCameraType();
 		activeLevel = client.level;
@@ -163,7 +162,7 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 		client.options.setCameraType(CameraType.THIRD_PERSON_BACK);
 		CAMERA.captureFromPlayer(client.player, settings);
 		syncCameraEntity(client);
-		client.setScreen(new PhotoModeScreen());
+		client.gui.setScreen(new PhotoModeScreen());
 	}
 
 	public static void exitPhotoMode(Minecraft client) {
@@ -176,7 +175,6 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 		restoreCameraEntity(client);
 		activeLevel = null;
 		activePlayer = null;
-		client.options.hideGui = previousHideGui;
 		client.smartCull = previousSmartCull;
 		if (previousCameraType != null) {
 			client.options.setCameraType(previousCameraType);
@@ -192,8 +190,8 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 		pauseSingleplayer = false;
 		KeyMapping.releaseAll();
 
-		if (client.screen instanceof PhotoModeScreen) {
-			client.setScreen(null);
+		if (client.gui.screen() instanceof PhotoModeScreen) {
+			client.gui.setScreen(null);
 		}
 	}
 
@@ -228,11 +226,11 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 	}
 
 	public static boolean shouldPauseWorld() {
-		return active && pauseSingleplayer && Minecraft.getInstance().isSingleplayer();
+		return active && pauseSingleplayer && isSingleplayer(Minecraft.getInstance());
 	}
 
 	public static boolean canToggleSingleplayerPause() {
-		return active && Minecraft.getInstance().isSingleplayer();
+		return active && isSingleplayer(Minecraft.getInstance());
 	}
 
 	public static void toggleSingleplayerPause() {
@@ -347,5 +345,10 @@ public final class ScreenshotStudioClient implements ClientModInitializer {
 		if (entity != null) {
 			entity.despawn();
 		}
+	}
+
+	private static boolean isSingleplayer(Minecraft client) {
+		IntegratedServer server = client.getSingleplayerServer();
+		return server != null && !server.isPublished();
 	}
 }

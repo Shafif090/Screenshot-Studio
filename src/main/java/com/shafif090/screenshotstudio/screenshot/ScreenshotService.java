@@ -17,7 +17,7 @@ public final class ScreenshotService {
 			File directory = new File(client.gameDirectory, Screenshot.SCREENSHOT_DIR);
 			directory.mkdir();
 			File file = nextScreenshotFile(directory);
-			Screenshot.takeScreenshot(client.getMainRenderTarget(), image -> saveScreenshot(client, image, file));
+			Screenshot.takeScreenshot(client.gameRenderer.mainRenderTarget(), image -> saveScreenshot(client, image, file));
 		} catch (Throwable throwable) {
 			ScreenshotStudioMod.LOGGER.warn("Version-safe screenshot capture failed; falling back to vanilla keybind", throwable);
 			KeyMapping.click(client.options.keyScreenshot.getDefaultKey());
@@ -32,7 +32,7 @@ public final class ScreenshotService {
 			} catch (Exception exception) {
 				ScreenshotStudioMod.LOGGER.warn("Couldn't save Screenshot Studio screenshot", exception);
 				client.execute(() -> SystemToast.add(
-						client.getToastManager(),
+						client.gui.toastManager(),
 						SystemToast.SystemToastId.PERIODIC_NOTIFICATION,
 						Component.translatable("screenshot.failure", exception.getMessage()),
 						null
@@ -42,7 +42,7 @@ public final class ScreenshotService {
 	}
 
 	private void showSavedToast(Minecraft client, File file) {
-		client.execute(() -> OpenScreenshotToast.show(client.getToastManager(), file));
+		client.execute(() -> OpenScreenshotToast.show(client.gui.toastManager(), file));
 	}
 
 	private File nextScreenshotFile(File directory) {

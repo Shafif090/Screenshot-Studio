@@ -4,9 +4,10 @@ import com.shafif090.screenshotstudio.ScreenshotStudioClient;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.extract.LevelExtractor;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.world.TickRateManager;
 import net.minecraft.world.entity.Entity;
@@ -16,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(LevelRenderer.class)
+@Mixin(LevelExtractor.class)
 public abstract class LevelRendererMixin {
 	@Shadow
 	private EntityRenderState extractEntity(Entity entity, float partialTickTime) {
@@ -36,8 +37,11 @@ public abstract class LevelRendererMixin {
 		TickRateManager tickRateManager = client.level.tickRateManager();
 		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(!tickRateManager.isEntityFrozen(client.player));
 		EntityRenderState state = extractEntity(client.player, partialTick);
+		state.isInvisible = false;
+		if (state instanceof LivingEntityRenderState livingState) {
+			livingState.isInvisibleToPlayer = false;
+		}
 		output.entityRenderStates.add(state);
-		output.haveGlowingEntities = output.haveGlowingEntities || state.appearsGlowing();
 		output.lastEntityRenderStateCount = output.entityRenderStates.size();
 	}
 }

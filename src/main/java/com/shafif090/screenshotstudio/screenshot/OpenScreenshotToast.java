@@ -14,11 +14,12 @@ import java.io.File;
 
 public final class OpenScreenshotToast implements Toast {
 	private static final Identifier BACKGROUND_SPRITE = Identifier.withDefaultNamespace("toast/system");
-	private static final int WIDTH = 220;
+	private static final int WIDTH = 240;
 	private static final int HEIGHT = 44;
-	private static final int BUTTON_X = 156;
+	private static final int TEXT_X = 12;
+	private static final int BUTTON_X = 180;
 	private static final int BUTTON_Y = 21;
-	private static final int BUTTON_WIDTH = 52;
+	private static final int BUTTON_WIDTH = 48;
 	private static final int BUTTON_HEIGHT = 16;
 	private static final long DISPLAY_TIME_MS = 10000L;
 	private static final Object TOKEN = new Object();
@@ -70,8 +71,8 @@ public final class OpenScreenshotToast implements Toast {
 	@Override
 	public void extractRenderState(GuiGraphicsExtractor graphics, Font font, long fullyVisibleForMs) {
 		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND_SPRITE, 0, 0, width(), height());
-		graphics.text(font, Component.translatable("toast.screenshotstudio.saved"), 12, 7, 0xFFFFFF00, false);
-		graphics.text(font, Component.literal(file.getName()), 12, 22, 0xFFFFFFFF, false);
+		graphics.text(font, Component.translatable("toast.screenshotstudio.saved"), TEXT_X, 7, 0xFFFFFF00, false);
+		graphics.text(font, Component.literal(trimToWidth(font, file.getName(), BUTTON_X - TEXT_X - 8)), TEXT_X, 24, 0xFFFFFFFF, false);
 		graphics.fill(BUTTON_X, BUTTON_Y, BUTTON_X + BUTTON_WIDTH, BUTTON_Y + BUTTON_HEIGHT, 0xFF2F3640);
 		graphics.outline(BUTTON_X, BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT, 0xFFFFFFFF);
 		graphics.centeredText(font, Component.translatable("toast.screenshotstudio.open"), BUTTON_X + BUTTON_WIDTH / 2, BUTTON_Y + 4, 0xFFFFFFFF);
@@ -97,5 +98,19 @@ public final class OpenScreenshotToast implements Toast {
 		if (current == this) {
 			current = null;
 		}
+	}
+
+	private static String trimToWidth(Font font, String text, int maxWidth) {
+		if (font.width(text) <= maxWidth) {
+			return text;
+		}
+
+		String ellipsis = "...";
+		int ellipsisWidth = font.width(ellipsis);
+		StringBuilder builder = new StringBuilder(text);
+		while (!builder.isEmpty() && font.width(builder.toString()) + ellipsisWidth > maxWidth) {
+			builder.deleteCharAt(builder.length() - 1);
+		}
+		return builder + ellipsis;
 	}
 }
