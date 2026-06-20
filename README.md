@@ -60,6 +60,10 @@ The built mod jar is written to `build/libs/`.
 
 <img src="media/demo_3.png" alt=""/>
 
+<img src="media/demo_4.png" alt=""/>
+
+<img src="media/demo_5.png" alt=""/>
+
 ## Known Limitations
 
 - Multiplayer freecam is client-side. Server chunk loading is still limited by the chunks the server sends around the real player.
